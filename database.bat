@@ -1,0 +1,1 @@
+psql -U athena -W -d song_requester
