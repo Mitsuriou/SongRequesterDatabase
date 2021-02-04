@@ -1,1 +1,1 @@
-psql -U postgres -d postgres -f .\db_creation.sql -W
+psql -U postgres -d postgres -f .\create_database.psql -W

@@ -4,7 +4,12 @@
 Find the web project sources [here](https://github.com/Mitsuriou/SongRequester).  
 Find the API sources [here](https://github.com/Mitsuriou/SongRequesterAPI).
 
-### How to get started:
+## Getting started
+### Release
 ```bash
 $ .\init.bat
+```
+### Development (tests)
+```bash
+$ .\init.test.bat
 ```

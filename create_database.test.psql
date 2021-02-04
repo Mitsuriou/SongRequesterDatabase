@@ -1,0 +1,83 @@
+-- Force UTF-8
+SET client_encoding = UTF8;
+
+-- Database
+DROP DATABASE song_requester;
+
+CREATE DATABASE song_requester
+WITH OWNER = athena
+ENCODING = 'UTF8'
+LC_COLLATE = 'fr-FR.utf8'
+LC_CTYPE = 'fr-FR.utf8'
+TEMPLATE = template0;
+
+-- Connect to the created database
+\c song_requester athena;
+
+ALTER DATABASE song_requester SET client_encoding = UTF8;
+
+-- Force UTF-8 once again
+SET client_encoding = UTF8;
+
+-- Schema
+CREATE SCHEMA sr;
+
+-- GENDER_ENUM
+CREATE TYPE GENDER_ENUM AS ENUM(
+    'unspecified',
+    'feminine',
+    'masculine'
+);
+
+-- "USER" TABLE
+CREATE TABLE song_requester.sr.user(
+    id SERIAL PRIMARY KEY,
+    email TEXT NOT NULL,
+    nickname TEXT NOT NULL,
+    name TEXT,
+    surname TEXT,
+    country TEXT,
+    gender GENDER_ENUM DEFAULT 'unspecified',
+    profile_picture TEXT,
+    profile_banner TEXT,
+    creation TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+    -- connection_status
+);
+
+INSERT INTO song_requester.sr.user VALUES(DEFAULT,'fred@test.com','FrÉdéric');
+INSERT INTO song_requester.sr.user VALUES(DEFAULT,'ana@test.com','Anabelle');
+INSERT INTO song_requester.sr.user VALUES(DEFAULT,'','Nicolas');
+INSERT INTO song_requester.sr.user VALUES(DEFAULT,'모온.뷸@test.by-ul.kr','');
+INSERT INTO song_requester.sr.user VALUES(DEFAULT,'ji-soo.kim@test.bk-pk.com','');
+
+SELECT * FROM song_requester.sr.user;
+
+-- POST_VIEW_STATUS_ENUM
+CREATE TYPE POST_VIEW_STATUS_ENUM AS ENUM(
+    'posted',
+    'viewed',
+    'marked_as_unread',
+    'hidden',
+    'deleted'
+);
+
+-- VOTE_ENUM
+CREATE TYPE VOTE_ENUM AS ENUM(
+    'negative',
+    'neutral',
+    'positive'
+);
+
+-- "REQUEST" TABLE
+CREATE TABLE song_requester.sr.request(
+    id SERIAL PRIMARY KEY,
+    request_from INT NOT NULL,
+    request_to INT NOT NULL,
+    view_status POST_VIEW_STATUS_ENUM DEFAULT 'posted',
+    vote_status VOTE_ENUM DEFAULT 'neutral',
+    creation_date DATE NOT NULL,
+    url TEXT,
+    comment TEXT,
+    CONSTRAINT fk_request_from FOREIGN KEY(request_from) REFERENCES sr.user(id),
+    CONSTRAINT fk_request_to FOREIGN KEY(request_to) REFERENCES sr.user(id)
+);

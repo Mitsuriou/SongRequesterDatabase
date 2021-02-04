@@ -1,6 +1,4 @@
 -- Database
-DROP DATABASE IF EXISTS song_requester;
-
 CREATE DATABASE song_requester
     WITH OWNER = athena
     ENCODING = 'UTF8'
@@ -24,10 +22,3 @@ CREATE TABLE song_requester.sr.user(
 	email TEXT NOT NULL,
 	nickname TEXT NOT NULL
 );
-
-INSERT INTO song_requester.sr.user VALUES (DEFAULT, 'fred@test.com', 'FrÉdéric');
-INSERT INTO song_requester.sr.user VALUES (DEFAULT, 'ana@test.com', 'Anabelle');
-INSERT INTO song_requester.sr.user VALUES (DEFAULT, '', 'Nicolas');
-INSERT INTO song_requester.sr.user VALUES (DEFAULT, 'marie@test.ca-ac.com', '');
-
-SELECT * FROM song_requester.sr.user;
