@@ -38,9 +38,9 @@ CREATE TABLE sr.user(
     id SERIAL PRIMARY KEY,
     email CITEXT NOT NULL UNIQUE,
     nickname CITEXT NOT NULL UNIQUE,
-    name TEXT,
+    name TEXT DEFAULT '',
     show_name_publicly BOOLEAN DEFAULT FALSE,
-    surname TEXT,
+    surname TEXT DEFAULT '',
     show_surname_publicly BOOLEAN DEFAULT FALSE,
     country TEXT,
     show_country_publicly BOOLEAN DEFAULT FALSE,
@@ -86,9 +86,9 @@ CREATE VIEW PUBLIC_PROFILE
         show_country_publicly,
         CASE WHEN show_gender_publicly = TRUE THEN gender ELSE 'hidden_publicly' END AS gender, -- hide the gender if must not be shown publicly
         show_gender_publicly,
-        CASE WHEN show_profile_picture_publicly = TRUE THEN profile_picture ELSE '' END AS profile_picture, -- hide the profile_picture if must not be shown publicly
+        CASE WHEN show_profile_picture_publicly = TRUE THEN profile_picture ELSE NULL END AS profile_picture, -- hide the profile_picture if must not be shown publicly
         show_profile_picture_publicly,
-        CASE WHEN show_profile_banner_publicly = TRUE THEN profile_banner ELSE '' END AS profile_banner, -- hide the profile_banner if must not be shown publicly
+        CASE WHEN show_profile_banner_publicly = TRUE THEN profile_banner ELSE NULL END AS profile_banner, -- hide the profile_banner if must not be shown publicly
         show_profile_banner_publicly
     FROM sr.user;
 
