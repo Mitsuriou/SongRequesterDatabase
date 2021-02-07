@@ -1,0 +1,15 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 200,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "Song Requester Database",
+            "group": "Song Requester",
+            "database": "song_requester",
+            "username": "athena",
+            "askForPassword": true
+        }
+    ]
+}

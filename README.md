@@ -9,7 +9,7 @@ Find the API sources [here](https://github.com/Mitsuriou/SongRequesterAPI).
 ```bash
 $ .\init.bat
 ```
-### Development (tests)
+### Development (create tests dabatase)
 ```bash
 $ .\init.test.bat
 ```

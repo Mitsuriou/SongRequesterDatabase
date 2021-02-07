@@ -26,34 +26,77 @@ CREATE SCHEMA sr;
 CREATE TYPE GENDER_ENUM AS ENUM(
     'unspecified',
     'feminine',
-    'masculine'
+    'masculine',
+    'hidden_publicly'
 );
 
--- "USER" TABLE
-CREATE TABLE song_requester.sr.user(
+CREATE EXTENSION CITEXT;
+
+-- "USER" TABLE - DECLARATION
+CREATE TABLE sr.user(
     id SERIAL PRIMARY KEY,
-    email TEXT NOT NULL,
-    nickname TEXT NOT NULL,
+    email CITEXT NOT NULL UNIQUE,
+    nickname CITEXT NOT NULL UNIQUE,
     name TEXT,
+    show_name_publicly BOOLEAN DEFAULT FALSE,
     surname TEXT,
+    show_surname_publicly BOOLEAN DEFAULT FALSE,
     country TEXT,
+    show_country_publicly BOOLEAN DEFAULT FALSE,
     gender GENDER_ENUM DEFAULT 'unspecified',
+    show_gender_publicly BOOLEAN DEFAULT FALSE,
     profile_picture TEXT,
+    show_profile_picture_publicly BOOLEAN DEFAULT FALSE,
     profile_banner TEXT,
-    creation TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
-    -- connection_status
+    show_profile_banner_publicly BOOLEAN DEFAULT FALSE,
+    creation TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    -- password
+    -- backup email address
+    -- backup phone number
+    -- connection status
+    -- last login date
 );
 
-INSERT INTO song_requester.sr.user VALUES(DEFAULT,'fred@test.com','FrÉdéric');
-INSERT INTO song_requester.sr.user VALUES(DEFAULT,'ana@test.com','Anabelle');
-INSERT INTO song_requester.sr.user VALUES(DEFAULT,'','Nicolas');
-INSERT INTO song_requester.sr.user VALUES(DEFAULT,'모온.뷸@test.by-ul.kr','');
-INSERT INTO song_requester.sr.user VALUES(DEFAULT,'ji-soo.kim@test.bk-pk.com','');
+-- "USER" TABLE - DUMMY DATA
+INSERT
+    INTO sr.user(email, nickname, name, show_name_publicly, surname, show_surname_publicly, country, gender)
+    VALUES('rosé&@yg-ent.kr','Rosé', 'Roseanne', TRUE, 'Park', TRUE, 'kr', 'feminine');
 
-SELECT * FROM song_requester.sr.user;
+INSERT
+    INTO sr.user(email, nickname, name, surname)
+    VALUES('문.별@test.mail.com', 'Moonstar', '문', '별이');
+
+INSERT
+    INTO sr.user(email, nickname)
+    VALUES('jvna@redlightmanagement.com', 'JVNA');
+
+SELECT * FROM sr.user;
+
+-- "PUBLIC_PROFILE" VIEW
+CREATE VIEW PUBLIC_PROFILE
+    AS SELECT
+        id,
+        nickname,
+        CASE WHEN show_name_publicly = TRUE THEN name ELSE '' END AS name, -- hide the name if must not be shown publicly
+        show_name_publicly,
+        CASE WHEN show_surname_publicly = TRUE THEN surname ELSE '' END AS surname, -- hide the surname if must not be shown publicly
+        show_surname_publicly,
+        CASE WHEN show_country_publicly = TRUE THEN country ELSE '' END AS country, -- hide the country if must not be shown publicly
+        show_country_publicly,
+        CASE WHEN show_gender_publicly = TRUE THEN gender ELSE 'hidden_publicly' END AS gender, -- hide the gender if must not be shown publicly
+        show_gender_publicly,
+        CASE WHEN show_profile_picture_publicly = TRUE THEN profile_picture ELSE '' END AS profile_picture, -- hide the profile_picture if must not be shown publicly
+        show_profile_picture_publicly,
+        CASE WHEN show_profile_banner_publicly = TRUE THEN profile_banner ELSE '' END AS profile_banner, -- hide the profile_banner if must not be shown publicly
+        show_profile_banner_publicly
+    FROM sr.user;
+
+SELECT * FROM PUBLIC_PROFILE;
+SELECT * FROM PUBLIC_PROFILE WHERE nickname = 'Rosé';
+SELECT * FROM PUBLIC_PROFILE WHERE id = 3;
 
 -- POST_VIEW_STATUS_ENUM
-CREATE TYPE POST_VIEW_STATUS_ENUM AS ENUM(
+CREATE TYPE sr.POST_VIEW_STATUS_ENUM AS ENUM(
     'posted',
     'viewed',
     'marked_as_unread',
@@ -62,19 +105,19 @@ CREATE TYPE POST_VIEW_STATUS_ENUM AS ENUM(
 );
 
 -- VOTE_ENUM
-CREATE TYPE VOTE_ENUM AS ENUM(
+CREATE TYPE sr.VOTE_ENUM AS ENUM(
     'negative',
     'neutral',
     'positive'
 );
 
 -- "REQUEST" TABLE
-CREATE TABLE song_requester.sr.request(
+CREATE TABLE sr.request(
     id SERIAL PRIMARY KEY,
     request_from INT NOT NULL,
     request_to INT NOT NULL,
-    view_status POST_VIEW_STATUS_ENUM DEFAULT 'posted',
-    vote_status VOTE_ENUM DEFAULT 'neutral',
+    view_status sr.POST_VIEW_STATUS_ENUM DEFAULT 'posted',
+    vote_status sr.VOTE_ENUM DEFAULT 'neutral',
     creation_date DATE NOT NULL,
     url TEXT,
     comment TEXT,
