@@ -132,17 +132,24 @@ INSERT
 
 INSERT
     INTO sr.request(request_from, request_to, url, comment)
-    VALUES(1, 2, 'https://www.youtube.com/watch?v=1QD0FeZyDtQ', 'NO MOOOORE UTOPIAAAA!');
+    VALUES(2, 3, 'https://www.youtube.com/watch?v=1QD0FeZyDtQ', 'NO MOOOORE UTOPIAAAA!');
 
-SELECT
-    rq.id,
-    usr.nickname as request_from,
-    usr2.nickname as request_to,
-    rq.view_status,
-    rq.vote_status,
-    rq.creation_date,
-    rq.url,
-    rq.comment
-    FROM sr.request rq
-    INNER JOIN sr.user usr ON usr.id = rq.request_from
-    INNER JOIN sr.user usr2 ON usr2.id = rq.request_to;
+-- "PUBLIC_REQUEST" VIEW
+CREATE VIEW PUBLIC_REQUEST
+    AS SELECT
+        rq.id,
+        usr.id as requester,
+        usr2.id as receiver,
+        usr.nickname as request_from,
+        usr2.nickname as request_to,
+        rq.view_status,
+        rq.vote_status,
+        rq.creation_date,
+        rq.url,
+        rq.comment
+        FROM sr.request rq
+        INNER JOIN sr.user usr ON usr.id = rq.request_from
+        INNER JOIN sr.user usr2 ON usr2.id = rq.request_to;
+
+SELECT * FROM PUBLIC_REQUEST;
+SELECT * FROM PUBLIC_REQUEST WHERE receiver = 3;
