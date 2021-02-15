@@ -50,7 +50,7 @@ CREATE TABLE sr.user(
     show_profile_picture_publicly BOOLEAN DEFAULT FALSE,
     profile_banner TEXT,
     show_profile_banner_publicly BOOLEAN DEFAULT FALSE,
-    creation TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    creation TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_DATE
     -- password
     -- backup email address
     -- backup phone number
@@ -71,7 +71,7 @@ INSERT
     INTO sr.user(email, nickname)
     VALUES('jvna@redlightmanagement.com', 'JVNA');
 
-SELECT * FROM sr.user;
+-- SELECT * FROM sr.user;
 
 -- "PUBLIC_PROFILE" VIEW
 CREATE VIEW PUBLIC_PROFILE
@@ -92,9 +92,9 @@ CREATE VIEW PUBLIC_PROFILE
         show_profile_banner_publicly
     FROM sr.user;
 
-SELECT * FROM PUBLIC_PROFILE;
-SELECT * FROM PUBLIC_PROFILE WHERE nickname = 'Rosé';
-SELECT * FROM PUBLIC_PROFILE WHERE id = 3;
+-- SELECT * FROM PUBLIC_PROFILE;
+-- SELECT * FROM PUBLIC_PROFILE WHERE nickname = 'Rosé';
+-- SELECT * FROM PUBLIC_PROFILE WHERE id = 3;
 
 -- POST_VIEW_STATUS_ENUM
 CREATE TYPE sr.POST_VIEW_STATUS_ENUM AS ENUM(
@@ -119,9 +119,30 @@ CREATE TABLE sr.request(
     request_to INT NOT NULL,
     view_status sr.POST_VIEW_STATUS_ENUM DEFAULT 'posted',
     vote_status sr.VOTE_ENUM DEFAULT 'neutral',
-    creation_date DATE NOT NULL,
+    creation_date DATE NOT NULL DEFAULT CURRENT_DATE,
     url TEXT,
     comment TEXT,
     CONSTRAINT fk_request_from FOREIGN KEY(request_from) REFERENCES sr.user(id),
     CONSTRAINT fk_request_to FOREIGN KEY(request_to) REFERENCES sr.user(id)
 );
+
+INSERT
+    INTO sr.request(request_from, request_to, url, comment)
+    VALUES(3, 1, 'https://www.youtube.com/watch?v=_waD9YW8Pa8', 'New music from Chunga Ha');
+
+INSERT
+    INTO sr.request(request_from, request_to, url, comment)
+    VALUES(1, 2, 'https://www.youtube.com/watch?v=1QD0FeZyDtQ', 'NO MOOOORE UTOPIAAAA!');
+
+SELECT
+    rq.id,
+    usr.nickname as request_from,
+    usr2.nickname as request_to,
+    rq.view_status,
+    rq.vote_status,
+    rq.creation_date,
+    rq.url,
+    rq.comment
+    FROM sr.request rq
+    INNER JOIN sr.user usr ON usr.id = rq.request_from
+    INNER JOIN sr.user usr2 ON usr2.id = rq.request_to;
