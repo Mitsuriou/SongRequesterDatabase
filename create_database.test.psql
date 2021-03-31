@@ -50,7 +50,8 @@ CREATE TABLE sr.user(
     show_profile_picture_publicly BOOLEAN DEFAULT FALSE,
     profile_banner TEXT,
     show_profile_banner_publicly BOOLEAN DEFAULT FALSE,
-    creation TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_DATE
+    creation TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_DATE,
+    account_disabled BOOL NOT NULL DEFAULT FALSE
     -- password
     -- backup email address
     -- backup phone number
